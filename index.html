@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Smart Visitor Counter</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #1688ff;
+      --green: #00e676;
+      --yellow: #ffc107;
+      --purple: #b85cff;
+      --text: #dce9ff;
+      --shadow: 0 0 25px rgba(0, 126, 255, 0.08);
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(0,105,255,.07), transparent 35%),
+        linear-gradient(135deg, #010a19, #03132b 50%, #020b1d);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 96%;
+      max-width: 1500px;
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(30,90,140,.25);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(145deg,#07356d,#041a3a);
+      border: 1px solid #124b88;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+    }
+
+    .brand h1 {
+      font-size: 25px;
+      color: #f1f6ff;
+    }
+
+    .brand p {
+      font-size: 10px;
+      margin-top: 4px;
+      color: #aab8cb;
+      letter-spacing: 1px;
+      font-family: monospace;
+    }
+
+    .online {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 20px;
+      background: rgba(0,230,118,.09);
+      border: 1px solid rgba(0,230,118,.22);
+      color: #00e676;
+      font-size: 11px;
+      font-family: monospace;
+    }
+
+    .online-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--green);
+      animation: pulse 1.7s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: .45;
+        transform: scale(.75);
+      }
+    }
+
+    /* SECTIONS */
+
+    section {
+      margin-top: 17px;
+    }
+
+    .section-title {
+      color: #3197ff;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    /* DASHBOARD CARDS */
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 13px;
+    }
+
+    .card {
+      background: linear-gradient(145deg,rgba(7,32,61,.94),rgba(3,23,46,.92));
+      border: 1px solid rgba(24,74,120,.65);
+      border-radius: 10px;
+      padding: 18px 14px;
+      min-height: 115px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 11px;
+      color: #b9c5d8;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--green);
+    }
+
+    .card-value.blue {
+      color: #3e93ff;
+      font-size: 27px;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: #b0bdce;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .card-icon {
+      position: absolute;
+      right: 14px;
+      top: 32px;
+      font-size: 25px;
+      color: #228aff;
+    }
+
+    /* COUNTER */
+
+    .counter-box {
+      min-height: 400px;
+      border: 1px solid rgba(24,74,120,.7);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at center,rgba(0,102,255,.06),transparent 45%),
+        linear-gradient(145deg,#061b36,#03162d);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+
+    .device-status {
+      position: absolute;
+      top: 17px;
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      color: #d2dbea;
+      font-size: 13px;
+    }
+
+    .device-status span {
+      color: #00e676;
+    }
+
+    .counter-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #cbd6e8;
+      margin-top: 25px;
+    }
+
+    .counter-number {
+      font-size: 68px;
+      line-height: 1;
+      margin-top: 8px;
+      font-weight: bold;
+      background: linear-gradient(180deg,#54b1ff,#0875ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .visitors-label {
+      font-size: 16px;
+      letter-spacing: 1px;
+      color: #bbc7d9;
+      margin-top: 3px;
+    }
+
+    .people-circle {
+      width: 106px;
+      height: 106px;
+      border-radius: 50%;
+      border: 2px solid #168eff;
+      margin-top: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 43px;
+    }
+
+    /* BUTTON */
+
+    .count-button {
+      margin-top: 18px;
+      padding: 13px 32px;
+      border: 1px solid #168eff;
+      border-radius: 8px;
+      background: rgba(22,142,255,.15);
+      color: #4da3ff;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .count-button:hover {
+      background: rgba(22,142,255,.30);
+      box-shadow: 0 0 18px rgba(22,142,255,.25);
+    }
+
+    .count-button:active {
+      transform: scale(.95);
+    }
+
+    .counter-help {
+      text-align: center;
+      margin-top: 13px;
+      color: #9ba9be;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* LOWER GRID */
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: .85fr 1.1fr;
+      gap: 14px;
+    }
+
+    .panel {
+      background: linear-gradient(145deg,#061c37,#03162d);
+      border: 1px solid rgba(24,74,120,.65);
+      border-radius: 11px;
+      padding: 16px;
+    }
+
+    .panel-title {
+      color: #3399ff;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 13px;
+    }
+
+    /* STATISTICS */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .stat {
+      height: 78px;
+      background: rgba(3,20,40,.72);
+      border: 1px solid rgba(18,57,95,.65);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      gap: 15px;
+    }
+
+    .stat-icon {
+      font-size: 29px;
+      color: #00e676;
+      width: 35px;
+      text-align: center;
+    }
+
+    .stat-icon.yellow {
+      color: #ffc107;
+    }
+
+    .stat-icon.purple {
+      color: #bd66ff;
+    }
+
+    .stat-icon.blue {
+      color: #398fff;
+    }
+
+    .stat-number {
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .stat-text {
+      font-size: 11px;
+      color: #b4c0d2;
+      margin-top: 4px;
+    }
+
+    /* TABLE */
+
+    .table {
+      border: 1px solid rgba(18,57,95,.65);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .table-head,
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr 1fr;
+      padding: 12px;
+      gap: 5px;
+    }
+
+    .table-head {
+      color: #b6c1d3;
+      font-size: 10px;
+      border-bottom: 1px solid rgba(18,57,95,.5);
+    }
+
+    .table-row {
+      color: #dce9ff;
+      font-size: 11px;
+      border-bottom: 1px solid rgba(18,57,95,.35);
+    }
+
+    .empty-table {
+      min-height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #aab6c8;
+      text-align: center;
+      font-size: 12px;
+      gap: 10px;
+    }
+
+    .empty-icon {
+      font-size: 36px;
+    }
+
+    /* AWS */
+
+    .architecture {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 20px 16px;
+    }
+
+    .arch-item {
+      width: 105px;
+      height: 102px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.4;
+      border: 1px solid;
+      background: rgba(4,25,49,.8);
+    }
+
+    .arch-icon {
+      font-size: 30px;
+      margin-bottom: 7px;
+    }
+
+    .green-box {
+      color: #00f084;
+      border-color: rgba(0,230,118,.3);
+    }
+
+    .purple-box {
+      color: #c061ff;
+      border-color: rgba(192,97,255,.3);
+    }
+
+    .yellow-box {
+      color: #ffc21a;
+      border-color: rgba(255,194,26,.3);
+    }
+
+    .arrow {
+      font-size: 34px;
+      color: #278ef8;
+    }
+
+    /* ACTIVITY */
+
+    .activity {
+      min-height: 125px;
+      border: 1px solid rgba(18,57,95,.65);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .activity-head,
+    .activity-row {
+      display: grid;
+      grid-template-columns: .8fr .8fr 1fr 1.5fr .8fr .7fr;
+      padding: 12px;
+      gap: 5px;
+    }
+
+    .activity-head {
+      font-size: 10px;
+      color: #b6c1d3;
+      border-bottom: 1px solid rgba(18,57,95,.5);
+    }
+
+    .activity-row {
+      font-size: 11px;
+      color: #dce9ff;
+      border-bottom: 1px solid rgba(18,57,95,.3);
+    }
+
+    .activity-empty {
+      min-height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+      color: #aab6c8;
+    }
+
+    /* TEAM */
+
+    .team {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 15px;
+    }
+
+    .member {
+      background: linear-gradient(145deg,#061d38,#04172e);
+      border: 1px solid rgba(18,57,95,.7);
+      border-radius: 8px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      gap: 14px;
+    }
+
+    .rank {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: 1px solid #238cff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #238cff;
+    }
+
+    .rank.first {
+      border-color: #ffb400;
+      color: #ffb400;
+    }
+
+    .member-name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .member-id {
+      color: #99a7ba;
+      font-family: monospace;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      text-align: center;
+      color: #7f8ca1;
+      font-size: 10px;
+      padding: 15px 0 10px;
+      line-height: 1.8;
+      border-top: 1px solid rgba(30,90,140,.2);
+      margin-top: 12px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width:1000px) {
+
+      .cards {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .two-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .architecture {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width:650px) {
+
+      header {
+        padding: 15px 0;
+        gap: 15px;
+        align-items: flex-start;
+      }
+
+      .brand h1 {
+        font-size: 19px;
+      }
+
+      .online {
+        font-size: 9px;
+        padding: 8px 10px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .team {
+        grid-template-columns: 1fr;
+      }
+
+      .counter-number {
+        font-size: 58px;
+      }
+
+      .architecture {
+        gap: 7px;
+        padding: 5px;
+      }
+
+      .arch-item {
+        width: 90px;
+      }
+
+      .arrow {
+        display: none;
+      }
+
+      .table,
+      .activity {
+        overflow-x: auto;
+      }
+
+      .table-head,
+      .table-row {
+        min-width: 500px;
+      }
+
+      .activity-head,
+      .activity-row {
+        min-width: 700px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+
+    <div class="brand">
+
+      <div class="brand-icon">👥</div>
+
+      <div>
+        <h1>Smart Visitor Counter</h1>
+        <p>CLOUD CONNECTED VISITOR MONITORING SYSTEM</p>
+      </div>
+
+    </div>
+
+    <div class="online">
+      <div class="online-dot"></div>
+      SYSTEM ONLINE
+    </div>
+
+  </header>
+
+
+  <!-- DASHBOARD OVERVIEW -->
+  <section>
+
+    <div class="section-title">
+      DASHBOARD OVERVIEW
+    </div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-title">DEVICE STATUS</div>
+
+        <div class="card-value">
+          Online
+        </div>
+
+        <div class="card-sub">
+          ESP32 - Visitor Counter<br>
+          Ready
+        </div>
+
+        <div class="card-icon">⌁</div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">CLOUD CONNECTION</div>
+
+        <div class="card-value">
+          Connected
+        </div>
+
+        <div class="card-sub">
+          AWS IoT Core · MQTT
+        </div>
+
+        <div class="card-icon">☁</div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">CURRENT VISITORS</div>
+
+        <div
+          class="card-value blue"
+          id="currentVisitors">
+          0
+        </div>
+
+        <div class="card-sub">
+          Live Count
+        </div>
+
+        <div class="card-icon">♧</div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">TOTAL VISITORS TODAY</div>
+
+        <div
+          class="card-value blue"
+          id="totalVisitors">
+          0
+        </div>
+
+        <div class="card-sub">
+          Since 12:00 AM
+        </div>
+
+        <div class="card-icon">▥</div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">LAST UPDATED</div>
+
+        <div
+          class="card-value"
+          id="lastUpdated"
+          style="color:white;font-size:17px">
+          --:--:--
+        </div>
+
+        <div class="card-sub">
+          Today
+        </div>
+
+        <div class="card-icon">◷</div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- VISITOR COUNTER -->
+  <section>
+
+    <div class="section-title">
+      VISITOR COUNTER
+    </div>
+
+    <div class="counter-box">
+
+      <div class="device-status">
+        <span>●</span>
+        ESP32 button status:
+        <b>ready</b>
+      </div>
+
+      <div class="counter-label">
+        CURRENT VISITOR COUNT
+      </div>
+
+      <div
+        class="counter-number"
+        id="mainCounter">
+        0
+      </div>
+
+      <div class="visitors-label">
+        Visitors
+      </div>
+
+      <div class="people-circle">
+        👥
+      </div>
+
+      <!-- CLICK BUTTON -->
+      <button
+        id="countButton"
+        class="count-button">
+        + COUNT VISITOR
+      </button>
+
+      <div class="counter-help">
+        Tap the button to count a visitor<br>
+        Each tap increments the count and updates the dashboard
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- STATISTICS + RECENT ENTRIES -->
+  <section>
+
+    <div class="two-columns">
+
+      <!-- STATISTICS -->
+      <div class="panel">
+
+        <div class="panel-title">
+          TODAY'S STATISTICS
+        </div>
+
+        <div class="stats-grid">
+
+          <div class="stat">
+
+            <div class="stat-icon">
+              ♙
+            </div>
+
+            <div>
+              <div
+                class="stat-number"
+                id="statTotal">
+                0
+              </div>
+
+              <div class="stat-text">
+                Total Visitors Today
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-icon yellow">
+              ↗
+            </div>
+
+            <div>
+              <div
+                class="stat-number"
+                id="average">
+                0
+              </div>
+
+              <div class="stat-text">
+                Average per Hour
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-icon purple">
+              ◷
+            </div>
+
+            <div>
+              <div
+                class="stat-number"
+                id="peak">
+                0
+              </div>
+
+              <div class="stat-text">
+                Peak Count
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="stat-icon blue">
+              ▣
+            </div>
+
+            <div>
+              <div
+                class="stat-number"
+                id="entries">
+                0
+              </div>
+
+              <div class="stat-text">
+                Total Entries Today
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RECENT ENTRIES -->
+      <div class="panel">
+
+        <div class="panel-title">
+          RECENT VISITOR ENTRIES
+        </div>
+
+        <div class="table">
+
+          <div class="table-head">
+            <div>TIME</div>
+            <div>COUNT</div>
+            <div>SOURCE</div>
+            <div>STATUS</div>
+          </div>
+
+          <div
+            class="empty-table"
+            id="recentEmpty">
+
+            <div class="empty-icon">
+              👥
+            </div>
+
+            <div>
+              No visitor entries yet.<br>
+              Tap the button to start counting.
+            </div>
+
+          </div>
+
+          <div id="recentRows"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- AWS ARCHITECTURE -->
+  <section>
+
+    <div class="section-title">
+      AWS CLOUD ARCHITECTURE
+    </div>
+
+    <div class="architecture">
+
+      <div class="arch-item green-box">
+        <div class="arch-icon">▣</div>
+        Physical<br>Button
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="arch-item purple-box">
+        <div class="arch-icon">▦</div>
+        ESP32
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="arch-item green-box">
+        <div class="arch-icon">♧</div>
+        AWS IoT<br>Core
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="arch-item yellow-box">
+        <div class="arch-icon">λ</div>
+        AWS<br>Lambda
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="arch-item purple-box">
+        <div class="arch-icon">▤</div>
+        DynamoDB
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="arch-item green-box">
+        <div class="arch-icon">▱</div>
+        S3 Website<br>(Dashboard)
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ACTIVITY LOG -->
+  <section>
+
+    <div class="section-title">
+      ACTIVITY LOG
+    </div>
+
+    <div class="activity">
+
+      <div class="activity-head">
+        <div>DATE</div>
+        <div>TIME</div>
+        <div>SOURCE</div>
+        <div>MESSAGE</div>
+        <div>COUNT</div>
+        <div>STATUS</div>
+      </div>
+
+      <div
+        class="activity-empty"
+        id="activityEmpty">
+
+        <div style="font-size:32px;">
+          ▤
+        </div>
+
+        <div>
+          No activity yet.<br>
+          Visitor entries will appear here.
+        </div>
+
+      </div>
+
+      <div id="activityRows"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- TEAM -->
+  <section>
+
+    <div class="section-title">
+      PROJECT TEAM
+    </div>
+
+    <div class="team">
+
+      <div class="member">
+        <div class="rank first">1</div>
+        <div>
+          <div class="member-name">Ananya</div>
+          <div class="member-id">TEAM MEMBER</div>
+        </div>
+      </div>
+
+      <div class="member">
+        <div class="rank">2</div>
+        <div>
+          <div class="member-name">Kathyayini</div>
+          <div class="member-id">TEAM MEMBER</div>
+        </div>
+      </div>
+
+      <div class="member">
+        <div class="rank">3</div>
+        <div>
+          <div class="member-name">Asritha</div>
+          <div class="member-id">TEAM MEMBER</div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+    Smart Visitor Counter · Cloud Connected Visitor Monitoring System<br>
+    ESP32 · AWS IoT Core · Lambda · DynamoDB · S3
+  </footer>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+  let visitorCount = 0;
+  let totalVisitors = 0;
+  let entries = 0;
+  let peakCount = 0;
+
+  const mainCounter =
+    document.getElementById("mainCounter");
+
+  const currentVisitors =
+    document.getElementById("currentVisitors");
+
+  const totalVisitorsElement =
+    document.getElementById("totalVisitors");
+
+  const statTotal =
+    document.getElementById("statTotal");
+
+  const entriesElement =
+    document.getElementById("entries");
+
+  const average =
+    document.getElementById("average");
+
+  const peak =
+    document.getElementById("peak");
+
+  const recentEmpty =
+    document.getElementById("recentEmpty");
+
+  const recentRows =
+    document.getElementById("recentRows");
+
+  const activityEmpty =
+    document.getElementById("activityEmpty");
+
+  const activityRows =
+    document.getElementById("activityRows");
+
+  const countButton =
+    document.getElementById("countButton");
+
+
+  /* COUNT VISITOR */
+
+  countButton.addEventListener("click", function () {
+
+    // Increase counts
+    visitorCount++;
+    totalVisitors++;
+    entries++;
+
+    // Main visitor counter
+    mainCounter.textContent = visitorCount;
+
+    // Dashboard
+    currentVisitors.textContent = visitorCount;
+    totalVisitorsElement.textContent = totalVisitors;
+
+    // Statistics
+    statTotal.textContent = totalVisitors;
+    entriesElement.textContent = entries;
+
+    // Peak
+    if (visitorCount > peakCount) {
+      peakCount = visitorCount;
+      peak.textContent = peakCount;
+    }
+
+    // Average per hour
+    const hour =
+      new Date().getHours() || 1;
+
+    average.textContent =
+      Math.round(totalVisitors / hour);
+
+
+    // Current time
+    const now = new Date();
+
+    const time =
+      now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+    const date =
+      now.toLocaleDateString();
+
+
+    // Last updated
+    document.getElementById(
+      "lastUpdated"
+    ).textContent = time;
+
+
+    /* RECENT VISITOR ENTRY */
+
+    recentEmpty.style.display = "none";
+
+    const row =
+      document.createElement("div");
+
+    row.className = "table-row";
+
+    row.innerHTML = `
+      <div>${time}</div>
+      <div>${visitorCount}</div>
+      <div>ESP32 Button</div>
+      <div style="color:#00e676;">
+        Counted
+      </div>
+    `;
+
+    recentRows.prepend(row);
+
+
+    /* ACTIVITY LOG */
+
+    activityEmpty.style.display = "none";
+
+    const activity =
+      document.createElement("div");
+
+    activity.className =
+      "activity-row";
+
+    activity.innerHTML = `
+      <div>${date}</div>
+      <div>${time}</div>
+      <div>ESP32</div>
+      <div>Visitor counted</div>
+      <div>${visitorCount}</div>
+      <div style="color:#00e676;">
+        SUCCESS
+      </div>
+    `;
+
+    activityRows.prepend(activity);
+
+  });
+
+</script>
+
+</body>
+</html>
